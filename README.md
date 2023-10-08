@@ -8,5 +8,4 @@ A Python script that generates screen resolutions based on user-defined constrai
 - Outputs the results to a text file.
 
 ## Usage:
-Run the script and follow the on-screen prompts to input your desired constraints.
-
+To use the script, you would run it, and it would prompt you for various parameters like starting resolution, ending resolution, increment, maximum pixel limit, etc. After providing the inputs, the script will generate a list of resolutions and present you with options to sort them. Once sorted, the results will be saved to a file named "resolutions.txt".
