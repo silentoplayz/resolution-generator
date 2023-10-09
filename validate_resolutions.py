@@ -158,6 +158,7 @@ def sort_resolutions(method, order):
         "pixels": lambda x: x[0] * x[1],  # Sort based on total number of pixels
         "aspect_ratio": lambda x: abs(aspect_ratio_to_float(get_aspect_ratio(x[0], x[1])) - 1) if order == "closest" else aspect_ratio_to_float(get_aspect_ratio(x[0], x[1])),  # Sort based on aspect ratio, either as absolute difference from 1 or as the actual aspect ratio
         "upscale": lambda x: upscale_downscale_percentage_for_sort(base_res, x),  # Sort based on percentage of upscale/downscale required to reach the base resolution
+        "aspect_ratio_decimal": lambda x: aspect_ratio_to_float(get_aspect_ratio(x[0], x[1])),  # Sort based on aspect ratio decimal
     }
 
     start_time = time.time()  # Start measuring time
@@ -234,6 +235,13 @@ def write_resolution_to_file(file, resolution, base_res, end_res):
         f"Resolution: {resolution[0]}x{resolution[1]} | Aspect Ratio: {aspect_ratio_str} | {orientation} | Aspect Ratio Decimal: {aspect_ratio_float} | {formatted_pixels} Pixel{'s' if total_pixels != 1 else ''} {megapixels_part} {upscale_part} {downscale_part}\n"
     )
 
+def ask_to_save_invalid_resolutions():
+    while True:
+        save_invalid = input("Do you want to save invalid resolutions? (yes/no): ").strip().lower()
+        if save_invalid in ("yes", "no"):
+            return save_invalid == "yes"
+        print("Please enter 'yes' or 'no'.")
+
 # Functions for menu and user interactions
 
 def display_and_save_results():
@@ -260,11 +268,13 @@ def display_and_save_results():
         for resolution in valid_resolutions:
             write_resolution_to_file(file, resolution, base_res, end_res)
 
-        # Write the invalid resolutions section
-        file.write("\nInvalid Resolutions (Exceeding Maximum Pixel Limit):\n")
-        for resolution in invalid_resolutions:
-            write_resolution_to_file(file, resolution, base_res, end_res)
-            end_time = time.time()  # Stop measuring time
+        # Conditionally write the invalid resolutions section
+        if save_invalid_resolutions:
+            file.write("\nInvalid Resolutions (Exceeding Maximum Pixel Limit):\n")
+            for resolution in invalid_resolutions:
+                write_resolution_to_file(file, resolution, base_res, end_res)
+        
+        end_time = time.time()  # Stop measuring time
 
     print(f"Saved results to 'resolutions.txt' in {end_time - start_time:.2f} seconds.")
 
@@ -298,6 +308,7 @@ def main_menu():
         "Sort by average of width and height",
         "Sort by total number of pixels",
         "Sort by aspect ratio",
+        "Sort by aspect ratio decimal",
         "Sort by upscale percentage",
         "Choose new parameters",
         "Exit program",
@@ -310,9 +321,10 @@ def main_menu():
         3: lambda: sort_menu("average"),
         4: lambda: sort_menu("pixels"),
         5: lambda: sort_menu("aspect_ratio"),
-        6: lambda: sort_menu("upscale"),
-        7: get_user_input,
-        8: exit,
+        6: lambda: sort_menu("aspect_ratio_decimal"),
+        7: lambda: sort_menu("upscale"),
+        8: get_user_input,
+        9: exit,
     }
     
     # Display the menu and execute the selected action
@@ -326,9 +338,18 @@ def sort_menu(method):
     # Insert additional option for "aspect_ratio" method
     if method == "aspect_ratio":
         menu_options.insert(1, "Closest to 1:1 first")
+    elif method == "aspect_ratio_decimal":  # Add option for aspect ratio decimal sorting
+        menu_options.insert(1, "Closest to 1:1 first (Decimal)")
 
     # Dictionary of menu actions corresponding to each option
     if method == "aspect_ratio":
+        menu_actions = {
+            1: lambda: (sort_resolutions(method, "asc"), display_and_save_results(), print_saved_message()),
+            2: lambda: (sort_resolutions(method, "closest"), display_and_save_results(), print_saved_message()),
+            3: lambda: (sort_resolutions(method, "desc"), display_and_save_results(), print_saved_message()),
+            4: main_menu
+        }
+    elif method == "aspect_ratio_decimal":  # Add actions for aspect ratio decimal sorting
         menu_actions = {
             1: lambda: (sort_resolutions(method, "asc"), display_and_save_results(), print_saved_message()),
             2: lambda: (sort_resolutions(method, "closest"), display_and_save_results(), print_saved_message()),
@@ -399,11 +420,14 @@ def collect_aspect_ratio_range():
         print("Invalid aspect ratio range format. Please use the format '4:3-16:9'.")
 
 def get_user_input():
-    """Get user input for various parameters."""
+    global save_invalid_resolutions
     collect_resolution_parameters()
     collect_aspect_ratio_filter()
     collect_orientation_filter()
     collect_aspect_ratio_range()
+    
+    # Prompt the user to save invalid resolutions or not
+    save_invalid_resolutions = ask_to_save_invalid_resolutions()
     
     # Populate the resolutions list based on user input
     populate_resolutions()
