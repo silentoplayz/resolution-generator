@@ -42,7 +42,8 @@ Maximum Pixel Limit
 Minimum Pixel Limit
 Aspect Ratio Filter (optional)
 Orientation Filter (optional)
-Custom Aspect Ratio Range (optional)```
+Custom Aspect Ratio Range (optional)
+```
 
 # Info
 Enter a specific aspect ratio to filter by (e.g., 16:9) or leave blank:
