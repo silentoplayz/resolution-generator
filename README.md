@@ -50,12 +50,12 @@ Enter a specific aspect ratio to filter by (e.g., 16:9) or leave blank:
 
 Explanation: You can filter resolutions by a specific aspect ratio. For example, if you want to see only resolutions with a 16:9 aspect ratio, enter "16:9." To see all resolutions regardless of aspect ratio, leave this blank.
 Example: To filter by 16:9, enter "16:9."
-Filter by orientation (Horizontal, Vertical, Square) or leave blank:
 
+Filter by orientation (Horizontal, Vertical, Square) or leave blank:
 Explanation: You can filter resolutions by their orientation. For example, if you want to see only horizontal resolutions, enter "Horizontal." To see all resolutions regardless of orientation, leave this blank.
 Example: To filter by vertical resolutions, enter "Vertical."
-Enter a custom aspect ratio range (e.g., 4:3-16:9) or leave blank:
 
+Enter a custom aspect ratio range (e.g., 4:3-16:9) or leave blank:
 Explanation: You can specify a custom range of aspect ratios to filter resolutions. Use the format "X:Y-Z:W," where X:Y is the minimum aspect ratio, and Z:W is the maximum aspect ratio. For example, "4:3-16:9" will include resolutions with aspect ratios from 4:3 to 16:9. To see all resolutions regardless of aspect ratio range, leave this blank.
 Example: To filter resolutions between 16:10 and 21:9, enter "16:10-21:9."
 
